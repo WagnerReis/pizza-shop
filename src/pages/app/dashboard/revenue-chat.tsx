@@ -6,7 +6,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ResponsiveContainer, LineChart, XAxis, YAxis, Line } from "recharts";
+import {
+  ResponsiveContainer,
+  LineChart,
+  XAxis,
+  YAxis,
+  Line,
+  CartesianGrid,
+} from "recharts";
 
 const data = [
   { date: "10/12", revenue: 1200 },
@@ -47,6 +54,8 @@ export function RevenueChart() {
                 });
               }}
             />
+
+            <CartesianGrid vertical={false} className="stroke-muted" />
 
             <Line
               type="linear"
