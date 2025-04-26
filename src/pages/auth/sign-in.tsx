@@ -5,9 +5,10 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { signIn } from "@/api/sign-in";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const signInForm = z.object({
   email: z.string().email(),
@@ -16,17 +17,24 @@ const signInForm = z.object({
 type SignInForm = z.infer<typeof signInForm>;
 
 export function SignIn() {
+  const [searchParams] = useSearchParams();
+
   const {
     register,
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm<SignInForm>();
+  } = useForm<SignInForm>({
+    resolver: zodResolver(signInForm),
+    defaultValues: {
+      email: searchParams.get("email") ?? "",
+    },
+  });
 
   const { mutateAsync: authenticate } = useMutation({
     mutationFn: signIn,
   });
 
-  async function handleSignIn(data: any) {
+  async function handleSignIn(data: SignInForm) {
     try {
       await authenticate({ email: data.email });
 
