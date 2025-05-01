@@ -5,7 +5,9 @@ import { Pagination } from "./pagination";
 const onPageChangeCallback = vi.fn();
 
 describe("Pagination", () => {
-  beforeEach(() => {});
+  beforeEach(() => {
+    onPageChangeCallback.mockClear();
+  });
 
   it("should display the right amount of pages and results", () => {
     const wrapper = render(
@@ -41,5 +43,71 @@ describe("Pagination", () => {
 
     expect(onPageChangeCallback).toHaveBeenCalledTimes(1);
     expect(onPageChangeCallback).toHaveBeenCalledWith(1);
+  });
+
+  it("should be able to navigate the previous page", async () => {
+    const wrapper = render(
+      <Pagination
+        pageIndex={1}
+        totalCount={0}
+        perPage={0}
+        onPageChange={onPageChangeCallback}
+      />,
+    );
+
+    const previousPageButton = wrapper.getByRole("button", {
+      name: "Página anterior",
+    });
+
+    const user = userEvent.setup();
+
+    await user.click(previousPageButton);
+
+    expect(onPageChangeCallback).toHaveBeenCalledTimes(1);
+    expect(onPageChangeCallback).toHaveBeenCalledWith(0);
+  });
+
+  it("should be able to navigate the first page", async () => {
+    const wrapper = render(
+      <Pagination
+        pageIndex={5}
+        totalCount={200}
+        perPage={10}
+        onPageChange={onPageChangeCallback}
+      />,
+    );
+
+    const firstPageButton = wrapper.getByRole("button", {
+      name: "Primeira página",
+    });
+
+    const user = userEvent.setup();
+
+    await user.click(firstPageButton);
+
+    expect(onPageChangeCallback).toHaveBeenCalledTimes(1);
+    expect(onPageChangeCallback).toHaveBeenCalledWith(0);
+  });
+
+  it("should be able to navigate the last page", async () => {
+    const wrapper = render(
+      <Pagination
+        pageIndex={0}
+        totalCount={200}
+        perPage={10}
+        onPageChange={onPageChangeCallback}
+      />,
+    );
+
+    const lastPageButton = wrapper.getByRole("button", {
+      name: "Última página",
+    });
+
+    const user = userEvent.setup();
+
+    await user.click(lastPageButton);
+
+    expect(onPageChangeCallback).toHaveBeenCalledTimes(1);
+    expect(onPageChangeCallback).toHaveBeenCalledWith(19);
   });
 });
